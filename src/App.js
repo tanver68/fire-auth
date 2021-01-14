@@ -38,9 +38,36 @@ function App() {
       console.log(err.message);
     })
   }
+
+  const handleSignOut = () =>{
+    firebase.auth().signOut()
+    .then(res => {
+      // here user er signout ta jkhn succesfull holo tkhn isSignedIn hobe false and name,email,photo hoye jabe khali string and pore signedOutUser take set kore debo
+      
+      const signedOutUser = {
+        isSignedIn : false,
+        name : '',
+        email :'',
+        photo :''
+      }
+      setUser(signedOutUser)
+    })
+
+    .catch((error) => {
+      // An error happened.
+    });
+  }
   return (
     <div className="App">
-    <button onClick={handleSignIn}>Sign In</button>
+    {
+      // ata holo javascript if-else for one line . akhane bola hoyece j user jodi signin kora thake tahole button dakhabe sign out r jodi na thake tahole button hobe sign in(? atar mane holo if, ar : atar mane holo else) 
+
+      user.isSignedIn ? <button onClick={handleSignOut}>Sign out</button> :
+      <button onClick={handleSignIn}>Sign In</button>
+    }
+
+
+
     {
       user.isSignedIn && <p>Welcome {user.name}</p>  // akhane user.isSigndIn jodi true hoy tahole user ar name ta dakhabe
     }
