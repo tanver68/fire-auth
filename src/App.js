@@ -120,6 +120,10 @@ function App() {
 
              newUserInfo.correct = true;  //user succeccfully create hobe jkhn true hobe
              setUser(newUserInfo)
+              
+                        //jokhon user ta toyre kora hobe that means create user succesfuly create hoye ase tahole takhon amra (updtaeUserName function tak call korci) user ar name ta updateUser e deya debo tay korci
+
+             updateUserName(user.name);
           })
           .catch(error => {
             const newUserInfo = {...user};
@@ -141,6 +145,7 @@ function App() {
         newUserInfo.error ='';  
         newUserInfo.correct = true;  
         setUser(newUserInfo)
+        console.log('sign in user info',res.user)
       })
       .catch((error) => {
         const newUserInfo = {...user};
@@ -158,6 +163,26 @@ function App() {
     e.preventDefault();
   }
 
+                        //  update user name and other information to firebase
+  //akhane updateUserName function tar vitor input hisabe name tak nici and errow function tak call kore dece and firbase theke update profile er code tak ane past kore dece
+
+        const updateUserName = name =>{
+          const user = firebase.auth().currentUser;
+
+              user.updateProfile({
+                displayName: name                //dynamic name tak tumi update kore felo (akhane chayle     akhadik information pathano jay)
+               
+              })
+              .then(function() {
+                console.log('success update')
+                // Update successful.
+              })
+              .catch(function(error) {
+                console.log(error)
+                // An error happened.
+              }); 
+
+        }
   return (
     <div className="App">
     {
