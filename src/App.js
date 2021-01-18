@@ -24,7 +24,8 @@ function App() {
     correct: false
   })
 
-  const provider = new firebase.auth.GoogleAuthProvider();
+  const provider = new firebase.auth.GoogleAuthProvider();  //gmail theke login korar jonno firebase theke anci
+  const fbProvider = new firebase.auth.FacebookAuthProvider(); // facebook theke login er jonno firebase theke anci
   const handleSignIn = () =>{
     firebase.auth().signInWithPopup(provider)
     .then(res => {
@@ -44,6 +45,39 @@ function App() {
       console.log(err);
       console.log(err.message);
     })
+  }
+             
+                //facebook authentication er jonno event handlar use korci niche button e (one kind of gmail er moto)
+
+  const handleFbSignIn = ()=>{
+        firebase
+        .auth()
+        .signInWithPopup(fbProvider)
+        .then((result) => {
+              /** @type {firebase.auth.OAuthCredential} */
+              var credential = result.credential;
+          
+              // The signed-in user info.
+              var user = result.user;
+              console.log("fb user after sign in", user);
+          
+              // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+              var accessToken = credential.accessToken;
+             
+          
+      
+        })
+        .catch((error) => {
+              // Handle Errors here.
+              var errorCode = error.code;
+              var errorMessage = error.message;
+              // The email of the user's account used.
+              var email = error.email;
+              // The firebase.auth.AuthCredential type that was used.
+              var credential = error.credential;
+          
+          
+        });
   }
 
   const handleSignOut = () =>{
@@ -191,6 +225,10 @@ function App() {
       user.isSignedIn ? <button onClick={handleSignOut}>Sign out</button> :
       <button onClick={handleSignIn}>Sign In</button>
     }
+    <br/>
+             {/* facebook login korar jonno button create korci */}
+
+    <button onClick={handleFbSignIn}>Sign In Using Facebook</button>
 
 
 
