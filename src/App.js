@@ -8,10 +8,14 @@ import firebaseConfig from './firebase.config';
 firebase.initializeApp(firebaseConfig);
 
 function App() {
+
+  const [newUser,setNewUser] =useState(false);
   
   const [user,setUser] = useState({
     // akhana atodin amra initially 1ta object 0 othoba empty array declear korci karon amader multy value dorkar cilo na bt aj dorkar tay object declear kore nilam 
+
     isSignedIn: false,  //here initially jodi sign in false hoy tay declear korlam and other valu gulo faka that means 0 declear korlam
+
     name: '',
     email: '',
     photo: '',
@@ -61,7 +65,7 @@ function App() {
     });
   }
 
-  //Change hole ja korbe
+                            //Change hole ja korbe
 
   const handleBlur=(e) =>{
    
@@ -69,7 +73,7 @@ function App() {
 
    //console.log(e.target.name,e.target.value) //event.target mane event ta j element theke target hoyce seytar nameta and tar valuta nibe (oneke event na likhe e likhe)
    
-      //email validation
+                               //email validation
 
    if(e.target.name==='email')
    {
@@ -77,7 +81,7 @@ function App() {
     
    }
 
-     //password validation
+                              //password validation
 
    if(e.target.name==='password')
    {
@@ -85,7 +89,7 @@ function App() {
         
    }
 
-     //form validation and state manage kora
+                             //form validation and state manage kora
 
    if(isFieldValid)
    {
@@ -101,30 +105,56 @@ function App() {
 
   }
 
-  // Submit button er kaj
+                              // Submit button er kaj
 
   const handleSubmit = (e) =>{
     //console.log(user.email,user.password)
 
-    if(user.email && user.password){  //akhane email and password valid hole submit er vitor dhukbe .jta      invalid hobe seta dhukbe na
+    if( newUser && user.email && user.password){  //akhane newUser true hole and akhane email and password    valid hole submit er vitor dhukbe .jta nvalid hobe seta dhukbe na
 
           firebase.auth().createUserWithEmailAndPassword(user.email, user.password)
           .then(res => {
              const newUserInfo = {...user};  //akhane catch er eroor msg daowar por new kono form sign in korlr msg ta show kore tay error msg tare empty string korlam jate error daowar por new kono email dele jate ar msg ta show na kore thake
 
-             newUserInfo.error ='';
-             newUserInfo.correct = true;
+             newUserInfo.error ='';  //error tak empty string korlam
+
+             newUserInfo.correct = true;  //user succeccfully create hobe jkhn true hobe
              setUser(newUserInfo)
           })
           .catch(error => {
             const newUserInfo = {...user};
-            newUserInfo.error = error.message;
-            newUserInfo.correct = false;
+            newUserInfo.error = error.message; 
+
+            newUserInfo.correct = false;     //successfully msg ta false hole error msg show korbe
             setUser(newUserInfo);
           });
       
 
     }
+
+                       // jkhon not user hobe takhon user sign in korbe (sign in ar code)
+
+    if(!newUser && user.email && user.password){
+      firebase.auth().signInWithEmailAndPassword(user.email, user.password)
+      .then(res => {
+        const newUserInfo = {...user};
+        newUserInfo.error ='';  
+        newUserInfo.correct = true;  
+        setUser(newUserInfo)
+      })
+      .catch((error) => {
+        const newUserInfo = {...user};
+        newUserInfo.error = error.message; 
+
+        newUserInfo.correct = false;     
+        setUser(newUserInfo);
+      });
+    
+    }
+     
+
+                //page bar bar reload nibe na
+
     e.preventDefault();
   }
 
@@ -143,11 +173,19 @@ function App() {
       user.isSignedIn && <p>Welcome {user.name}</p>  // akhane user.isSigndIn jodi true hoy tahole user ar name ta dakhabe
     }
 
-    {/* submit form er kaj */}
+                      {/* submit form er kaj */}
 
     <form onSubmit={handleSubmit} >
       <h3>Our own Authentication</h3>
-      <input name="name" type="text"  onBlur={handleBlur} placeholder="Your name" />
+           
+                       {/* here crteate checkbox and form tak toggole kora hoyece (!newUser) deya  */}
+          
+      <input type="checkbox"  onChange={()=> setNewUser(!newUser)} id=""/> 
+      <label htmlFor="newUser">New User Sign Up</label>
+      <br/>
+                {/* newUser true hole signup option ashbe */}
+                
+      {newUser && <input name="name" type="text"  onBlur={handleBlur} placeholder="Your name" />}
       <br/>
       <input type="text" name='email' onBlur={handleBlur} placeholder="Your email address" required />
       <br/>
@@ -156,7 +194,7 @@ function App() {
       <input type="submit" value="Submit"/> 
     </form>
     <p style={{color:'red'}}>{user.error}</p>
-    {user.correct && <p style={{color:'green'}}>User Created Successfully</p> }
+    {user.correct && <p style={{color:'green'}}>User {newUser ? 'Created' : 'Loged In'} Successfully</p> }
     </div>
   );
 }
