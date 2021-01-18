@@ -14,7 +14,8 @@ function App() {
     isSignedIn: false,  //here initially jodi sign in false hoy tay declear korlam and other valu gulo faka that means 0 declear korlam
     name: '',
     email: '',
-    photo: ''
+    photo: '',
+    password:''
   })
 
   const provider = new firebase.auth.GoogleAuthProvider();
@@ -61,24 +62,40 @@ function App() {
   //Change hole ja korbe
 
   const handleBlur=(e) =>{
-   console.log(e.target.name,e.target.value) //event.target mane event ta j element theke target hoyce seytar nameta and tar valuta nibe (oneke event na likhe e likhe)
+   
+    let isFormValid = true;      //form ta valid kina check korar jonno
+
+   //console.log(e.target.name,e.target.value) //event.target mane event ta j element theke target hoyce seytar nameta and tar valuta nibe (oneke event na likhe e likhe)
    
       //email validation
 
    if(e.target.name==='email')
    {
-    const isEmailValid = /\S+@\S+\.\S+/.test(e.target.value); 
-    console.log(isEmailValid)
+    isFormValid = /\S+@\S+\.\S+/.test(e.target.value); 
+    
    }
 
      //password validation
 
    if(e.target.name==='password')
    {
-        const isPasswordValid= e.target.value.length > 6;
-        console.log(isPasswordValid)
+        isFormValid = e.target.value.length > 6;
+        
    }
 
+     //form validation and state manage kora
+
+   if(isFormValid)
+   {
+     const newUserInfo = {...user};  //user state er sob information newUserInfo ar modhe copy hoye gelo
+
+     newUserInfo[e.target.name] = e.target.value; //akhane newUserInfo ar modhe giya email,passowrd j proparty ta ace setak update korbo and tar value hobe email,password er value
+
+     setUser(newUserInfo)
+
+   }
+
+   
 
   }
 
@@ -107,6 +124,11 @@ function App() {
 
     <form onSubmit={handleSubmit} >
       <h3>Our own Authentication</h3>
+      <p>Name: {user.name} </p>
+      <p>Email: {user.email} </p>
+      <p>Password: {user.password} </p>
+      <input name="name" type="text"  onBlur={handleBlur} placeholder="Your name" />
+      <br/>
       <input type="text" name='email' onBlur={handleBlur} placeholder="Your email address" required />
       <br/>
       <input type="password" name='password' onBlur={handleBlur} placeholder="Your password" required />
