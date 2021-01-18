@@ -15,7 +15,9 @@ function App() {
     name: '',
     email: '',
     photo: '',
-    password:''
+    password:'',
+    error: '',
+    correct: false
   })
 
   const provider = new firebase.auth.GoogleAuthProvider();
@@ -63,7 +65,7 @@ function App() {
 
   const handleBlur=(e) =>{
    
-    let isFormValid = true;      //form ta valid kina check korar jonno
+    let isFieldValid = true;      //form ta valid kina check korar jonno
 
    //console.log(e.target.name,e.target.value) //event.target mane event ta j element theke target hoyce seytar nameta and tar valuta nibe (oneke event na likhe e likhe)
    
@@ -71,7 +73,7 @@ function App() {
 
    if(e.target.name==='email')
    {
-    isFormValid = /\S+@\S+\.\S+/.test(e.target.value); 
+    isFieldValid = /\S+@\S+\.\S+/.test(e.target.value); 
     
    }
 
@@ -79,13 +81,13 @@ function App() {
 
    if(e.target.name==='password')
    {
-        isFormValid = e.target.value.length > 6;
+        isFieldValid = e.target.value.length > 6;
         
    }
 
      //form validation and state manage kora
 
-   if(isFormValid)
+   if(isFieldValid)
    {
      const newUserInfo = {...user};  //user state er sob information newUserInfo ar modhe copy hoye gelo
 
@@ -101,8 +103,29 @@ function App() {
 
   // Submit button er kaj
 
-  const handleSubmit = () =>{
-    
+  const handleSubmit = (e) =>{
+    //console.log(user.email,user.password)
+
+    if(user.email && user.password){  //akhane email and password valid hole submit er vitor dhukbe .jta      invalid hobe seta dhukbe na
+
+          firebase.auth().createUserWithEmailAndPassword(user.email, user.password)
+          .then(res => {
+             const newUserInfo = {...user};  //akhane catch er eroor msg daowar por new kono form sign in korlr msg ta show kore tay error msg tare empty string korlam jate error daowar por new kono email dele jate ar msg ta show na kore thake
+
+             newUserInfo.error ='';
+             newUserInfo.correct = true;
+             setUser(newUserInfo)
+          })
+          .catch(error => {
+            const newUserInfo = {...user};
+            newUserInfo.error = error.message;
+            newUserInfo.correct = false;
+            setUser(newUserInfo);
+          });
+      
+
+    }
+    e.preventDefault();
   }
 
   return (
@@ -124,9 +147,6 @@ function App() {
 
     <form onSubmit={handleSubmit} >
       <h3>Our own Authentication</h3>
-      <p>Name: {user.name} </p>
-      <p>Email: {user.email} </p>
-      <p>Password: {user.password} </p>
       <input name="name" type="text"  onBlur={handleBlur} placeholder="Your name" />
       <br/>
       <input type="text" name='email' onBlur={handleBlur} placeholder="Your email address" required />
@@ -135,6 +155,8 @@ function App() {
       <br/>
       <input type="submit" value="Submit"/> 
     </form>
+    <p style={{color:'red'}}>{user.error}</p>
+    {user.correct && <p style={{color:'green'}}>User Created Successfully</p> }
     </div>
   );
 }
