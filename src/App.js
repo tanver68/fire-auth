@@ -57,6 +57,20 @@ function App() {
       // An error happened.
     });
   }
+
+  // Submit button er kaj
+  
+  const handleSubmit = () =>{
+    console.log('submit done')
+  }
+
+  //Change hole ja korbe
+
+  const handleChange=(event) =>{
+   console.log(event.target.name,event.target.value) //event.target mane event ta j element theke target hoyce seytar nameta and tar valuta nibe (oneke event na likhe e likhe)
+
+  }
+
   return (
     <div className="App">
     {
@@ -71,6 +85,17 @@ function App() {
     {
       user.isSignedIn && <p>Welcome {user.name}</p>  // akhane user.isSigndIn jodi true hoy tahole user ar name ta dakhabe
     }
+
+    {/* submit form er kaj */}
+
+    <form onSubmit={handleSubmit} >
+      <h3>here sign in form</h3>
+      <input type="text" name="email" onChange={handleChange} placeholder="Your email address" required />
+      <br/>
+      <input type="password" name="password" onChange={handleChange} placeholder="Your password" required />
+      <br/>
+      <input type="submit" value="Submit"/> 
+    </form>
     </div>
   );
 }
